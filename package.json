@@ -9,6 +9,8 @@
   "author": "Ivan Vasiunyk",
   "license": "MIT",
   "dependencies": {
-    "aws-iot-device-sdk": "^1.0.12"
+    "aws-iot-device-sdk": "^1.0.12",
+    "data-structures": "^1.4.2",
+    "websocket": "^1.0.23"
   }
 }
