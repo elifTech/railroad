@@ -1,12 +1,14 @@
 'use strict'
 
 var WebSocketClient = require('websocket').client;
+var Promise = require("bluebird");
 
 
-function JMRIService(ip) {
-  let self = this
+function JMRIService(ip, commandBuilder) {
+  let self = this;
 
-  self.serveIP = ip
+  self.serveIP = ip;
+  self.commandBuilder = commandBuilder;
 
   let server = new WebSocketClient();
   server.on('connect', connectHandler.bind(self));
@@ -33,13 +35,43 @@ var connectHandler = function(connection) {
   });
 
   self.connection = connection;
+  self.init();
+
 };
 
 
 JMRIService.prototype.send = function (message) {
   var self = this;
 
-  if (connection.connected) {
-    connection.sendUTF(JSON.stringify(message))
-  }
+  console.log('Sent: ' + message);
+
+  return new Promise(function (resolve, reject) {
+      if (self.connection.connected) {
+        self.connection.sendUTF(message);
+        resolve();
+      }
+    }).delay(1000);
 };
+
+JMRIService.prototype.init = function () {
+  var self = this;
+
+  self.send(self.commandBuilder.fillTemplate('set_address'));
+  self.send(self.commandBuilder.fillTemplate('power'));
+
+  setInterval(self.beat.bind(self), 1000);
+};
+
+JMRIService.prototype.stop = function () {
+  var self = this;
+
+  self.send(self.commandBuilder.fillTemplate('emergency_stop'));
+};
+
+JMRIService.prototype.beat = function () {
+  var self = this;
+
+  self.send(self.commandBuilder.fillTemplate('ping'))
+}
+
+module.exports = JMRIService;

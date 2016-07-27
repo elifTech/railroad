@@ -2,20 +2,6 @@ var awsIot = require('aws-iot-device-sdk');
 var config = require('./config');
 
 
-/*mythingstate = {
-  "state": {
-    "reported": {
-      "ip": "unknown"
-    }
-  }
-}
-
-var networkInterfaces = require( 'os' ).networkInterfaces( );
-networkInterface = networkInterfaces['eth0'] || networkInterfaces['wlan0']
-mythingstate["state"]["reported"]["ip"] = networkInterface[0]['address'];*/
-
-
-
 function AWSIoTService(dispatcher) {
   this.dispatcher = dispatcher;
 }
@@ -30,19 +16,19 @@ AWSIoTService.prototype.init = function () {
     self.thingShadows.register(config.device);
   });
 
-  self.thingShadows.on('message', delta.bind(self))
-  self.thingShadows.on('update', delta.bind(self))
+  self.thingShadows.on('foreignStateChange', delta.bind(self));
+
+  self.dispatcher.setUpdateCallback(self.update.bind(self));
 };
 
-var delta = function (thingName, stat, clientToken, stateObject) {
-  //console.log(this);
-  //console.log('delta');
-  console.log(thingName);
-  console.log(stat);
-  console.log(clientToken);
-  console.log(stateObject);
+AWSIoTService.prototype.update = function (state) {
+  var self = this;
 
-  //this.dispatcher.put(stateObject);
+  self.thingShadows.update(config.device, {'state': {'reported': state}})
+};
+
+var delta = function (thingName, operation, stateObject) {
+  this.dispatcher.put(stateObject.state.desired);
 }
 
 

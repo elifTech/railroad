@@ -7,8 +7,12 @@ function CommandBuilder(train) {
 }
 
 
-CommandBuilder.fillTemplate = function (str, data){
-  return  str.replace(/%\w+%/g, function(tag) {
-    return data[tag] || tag;
+CommandBuilder.prototype.fillTemplate = function (command, data){
+  data = data || {};
+  data['id'] = this.train;
+  return  commands[command].replace(/%\w+%/g, function(tag) {
+    return data[tag.toLowerCase().replace(/%/g,'')].toString() || tag;
   });
 };
+
+module.exports = CommandBuilder;

@@ -11,5 +11,14 @@ module.exports = {
       caPath: keyPath + 'rootCA.pem',
     clientId: deviceName,
       region: awsRegion
-  }
+  },
+  'state0': {
+    train: {
+      direction: true,
+      speed: 0.0,
+      light: false
+    }
+  },
+  'train': 3501,
+  'JMRI_IP': '192.168.0.70'
 }

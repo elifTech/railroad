@@ -1,69 +1,56 @@
 'use strict'
 
-let state0 = {
+var _ = require('lodash');
+var Queue = require('bee-queue');
+var StateManager = require('./StateManager');
+var CommandBuilder = require('./CommandBuilder');
+var JMRIService = require('./JMRIService');
+var Promise = require("bluebird");
 
-}
+var config = require('./config');
+var tca = require('./trainCommandActions');
 
 function Dispatcher() {
+  let self = this;
 
-}
+  self.commandBuilder = new CommandBuilder(config.train)
+  self.JMRI = new JMRIService(config.JMRI_IP, self.commandBuilder)
 
-Dispatcher.prototype.reset = function () {
-  this.state = state0;
+  self.trainState = new StateManager(config.state0.train, tca);
+  self.commandQueue = new Queue('command');
+
+  self.commandQueue.process(function(job, done){
+    console.log('JOB');
+    console.log(job);
+    let stateDiff = processCommand.bind(self)(job.data);
+
+    Promise.map(stateDiff, function(feature) {
+        let message = self.commandBuilder.fillTemplate(feature, self.trainState.state);
+        return self.JMRI.send(message);
+      }, {concurrency: 1}).then(function() {
+        return self.awsUpdate(self.trainState.state);
+      }).then(done);
+  });
+
+  self.commandQueue.on('succeeded', function (job, result) {
+  console.log('Job ' + job.id + ' succeeded with result: ' + result);
+});
 }
 
 Dispatcher.prototype.put = function (state) {
-  this.state = {}
+
+  this.commandQueue
+    .createJob(state)
+    .timeout(1000)
+    .save();
+}
+
+Dispatcher.prototype.setUpdateCallback = function (callback) {
+  this.awsUpdate = callback;
 };
 
+var processCommand = function (aws_state) {
+  return this.trainState.change(aws_state.command);
+}
+
 module.exports = Dispatcher;
-
-
-
-function init() {
-    if (connection.connected) {
-        connection.sendUTF('{"type":"throttle","data":{"throttle":"3501","address":3501}}');
-        connection.sendUTF('{"type":"power","data":{}}');
-        setDirection(direction);
-        setTimeout(ping, 1000);
-        setTimeout(start, 1000);
-    }
-}
-
-function start() {
-  if (connection.connected) {
-      connection.sendUTF('{"type":"throttle","data":{"throttle":"3501","speed":"0.5"}}');
-      if(direction)
-        setTimeout(stop, 9000);
-      else
-        setTimeout(stop, 9000);
-  }
-
-}
-
-function stop() {
-  if (connection.connected) {
-      connection.sendUTF('{"type":"throttle","data":{"throttle":"3501","speed":"0.0"}}');
-      setTimeout(reverse, 1000);
-  }
-}
-
-function ping() {
-  if (connection.connected) {
-      connection.sendUTF('{"type":"ping"}');
-      setTimeout(ping, 1000);
-  }
-}
-
-function reverse() {
-  direction = !direction;
-  console.log(direction);
-  setDirection(direction);
-  setTimeout(start, 1000);
-}
-
-function setDirection(drct) {
-  if (connection.connected) {
-      connection.sendUTF('{"type":"throttle","data":{"throttle":"3501","forward":' + drct + '}}');
-  }
-}
