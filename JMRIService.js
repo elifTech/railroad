@@ -12,8 +12,9 @@ function JMRIService(ip, commandBuilder) {
 
   var server = new WebSocketClient();
   server.on('connect', connectHandler.bind(self));
-  server.on('connectFailed', (error) =>
-              console.log('Connect Error: ' + error.toString())
+  server.on('connectFailed', function (error) {
+              console.log('Connect Error: ' + error.toString());
+            }
             );
   server.connect('ws://' + ip + ':12080/json/');
   this.server = server;
