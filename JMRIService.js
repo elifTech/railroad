@@ -5,12 +5,12 @@ var Promise = require("bluebird");
 
 
 function JMRIService(ip, commandBuilder) {
-  let self = this;
+  var self = this;
 
   self.serveIP = ip;
   self.commandBuilder = commandBuilder;
 
-  let server = new WebSocketClient();
+  var server = new WebSocketClient();
   server.on('connect', connectHandler.bind(self));
   server.on('connectFailed', (error) =>
               console.log('Connect Error: ' + error.toString())
@@ -20,7 +20,7 @@ function JMRIService(ip, commandBuilder) {
 }
 
 var connectHandler = function(connection) {
-  let self = this;
+  var self = this;
 
   connection.on('error', function(error) {
       console.log("Connection Error: " + error.toString());

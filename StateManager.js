@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 
-let state0 = {
+var state0 = {
   speed: 0.0,
   direction: true,
   light: false
@@ -16,7 +16,7 @@ function StateManager (state0, commandActions) {
 }
 
 StateManager.prototype.change = function (command) {
-  let oldState = this.state;
+  var oldState = this.state;
   this.history.push(this.state);
   this.state = this.commandActions[command](oldState);
 
@@ -28,7 +28,7 @@ StateManager.prototype.reset = function () {
 };
 
 
-let diff = function(oldObj, newObj) {
+var diff = function(oldObj, newObj) {
   return _(newObj).map(
             function(val, key){
               if (newObj[key] !== oldObj[key]) {

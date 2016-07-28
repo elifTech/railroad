@@ -1,6 +1,6 @@
 'use strict'
 
-let commands = require('./commands');
+var commands = require('./commands');
 
 function CommandBuilder(train) {
   this.train = train;

@@ -11,7 +11,7 @@ var config = require('./config');
 var tca = require('./trainCommandActions');
 
 function Dispatcher() {
-  let self = this;
+  var self = this;
 
   self.commandBuilder = new CommandBuilder(config.train)
   self.JMRI = new JMRIService(config.JMRI_IP, self.commandBuilder)
@@ -22,10 +22,10 @@ function Dispatcher() {
   self.commandQueue.process(function(job, done){
     console.log('JOB');
     console.log(job);
-    let stateDiff = processCommand.bind(self)(job.data);
+    var stateDiff = processCommand.bind(self)(job.data);
 
     Promise.map(stateDiff, function(feature) {
-        let message = self.commandBuilder.fillTemplate(feature, self.trainState.state);
+        var message = self.commandBuilder.fillTemplate(feature, self.trainState.state);
         return self.JMRI.send(message);
       }, {concurrency: 1}).then(function() {
         return self.awsUpdate(self.trainState.state);
