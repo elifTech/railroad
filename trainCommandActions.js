@@ -43,12 +43,12 @@ module.exports = {
   },
   'lights_on': function lights_on(state) {
     var newState = _.cloneDeep(state);
-    newState.lights = true;
+    newState.light = true;
     return newState;
   },
   'lights_off': function lights_off(state) {
     var newState = _.cloneDeep(state);
-    newState.lights = false;
+    newState.light = false;
     return newState;
   },
   'stop': function stop(state) {
