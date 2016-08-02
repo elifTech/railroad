@@ -4,6 +4,6 @@ module.exports = {
   'ping': '{"type":"ping"}',
   'direction': '{"type":"throttle","data":{"throttle":"%ID%","forward":"%DIRECTION%"}}',
   'speed': '{"type":"throttle","data":{"throttle":"%ID%","speed":"%SPEED%"}}',
-  'light': '{"type":"throttle","data":{"throttle":"3501","F0":"%LIGHT%"}}',
+  'light': '{"type":"throttle","data":{"throttle":"%ID%","F0":"%LIGHT%"}}',
   'emergency_stop': '{"type":"throttle","data":{"throttle":"%ID%","speed":-1.0}}',
 }

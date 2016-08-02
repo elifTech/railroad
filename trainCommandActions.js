@@ -8,7 +8,7 @@ module.exports = {
 
     newState.direction = true;
     if(state.speed <= 0.0 || state.direction !== newState.direction){
-      newState.speed = 0.1;
+      newState.speed = 0.2;
     }
 
     return newState;
@@ -18,7 +18,7 @@ module.exports = {
 
     newState.direction = false;
     if(state.speed <= 0.0 || state.direction !== newState.direction){
-      newState.speed = 0.1;
+      newState.speed = 0.2;
     }
 
     return newState;
@@ -27,7 +27,7 @@ module.exports = {
     var newState = _.cloneDeep(state);
 
     if(state.speed < 1.0) {
-      newState.speed = state.speed + 0.1;
+      newState.speed = state.speed + 0.2;
     }
 
     return newState;
@@ -36,7 +36,7 @@ module.exports = {
     var newState = _.cloneDeep(state);
 
     if(state.speed > 0.0) {
-      newState.speed = state.speed - 0.1;
+      newState.speed = state.speed - 0.2;
     }
 
     return newState;
